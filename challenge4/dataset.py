@@ -39,7 +39,7 @@ def getValDs(val_tr):
     return ImgDataset(val_df,'val',val_tr)
 
 def getTestDs(test_tr):
-    val_df = pd.read_csv('sample_submission.csv')
+    val_df = pd.read_csv('data/sample_submission.csv')
     return ImgDataset(val_df,'test',test_tr)
 
 def writeSub(p):

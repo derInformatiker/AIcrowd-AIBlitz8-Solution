@@ -3,6 +3,7 @@ import dataset
 import torch
 from torch import nn
 import pandas as pd
+from sklearn.metrics import f1_score
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
@@ -16,7 +17,7 @@ class Classifier(pl.LightningModule):
         self.args = args
         
         #self.resnet = torch.hub.load('pytorch/vision:v0.9.0', 'resnet50', pretrained=False,num_classes = 2)
-        self.resnet = EfficientNet.from_pretrained('efficientnet-b4',num_classes = 4)
+        self.resnet = EfficientNet.from_pretrained('efficientnet-b3',num_classes = 4)
         #self.resnet._avg_pooling = nn.AdaptiveMaxPool2d(1)
 
     def forward(self, x):
@@ -39,7 +40,7 @@ class Classifier(pl.LightningModule):
         x, y = batch
         p = self(x)
         loss = F.cross_entropy(p, y.long())
-        f1 = f1_loss(y,p.argmax(1))
+        f1 = f1_score(y.tolist(),p.argmax(1).tolist(),average = 'micro')
         # Logging to TensorBoard by default
         self.log('val_loss', loss)
         self.log('val_f1',f1)
@@ -53,10 +54,10 @@ class Classifier(pl.LightningModule):
         p = self(x)
         
         loss = F.cross_entropy(p, y.long())
-        mse = F.mse_loss(p.argmax(1),y.float())
+        f1 = f1_score(y.tolist(),p.argmax(1).tolist(),average = 'micro')
         # Logging to TensorBoard by default
         self.log('test_loss', loss)
-        self.log('test_mse',mse)
+        self.log('test_f1',f1)
         return loss
     
     def configure_optimizers(self):
@@ -82,34 +83,11 @@ class Classifier(pl.LightningModule):
         val_ds = dataset.getTestDs(self.args['val_tr'])
         loader= DataLoader(val_ds,batch_size = self.args['batch_size'],num_workers = 8)
         return loader
-    
-    
-def f1_loss(y_true:torch.Tensor, y_pred:torch.Tensor, is_training=False) -> torch.Tensor:
-
-    assert y_true.ndim == 1
-    assert y_pred.ndim == 1 or y_pred.ndim == 2
-
-    if y_pred.ndim == 2:
-        y_pred = y_pred.argmax(dim=1)
-
-
-    tp = (y_true * y_pred).sum().to(torch.float32)
-    tn = ((1 - y_true) * (1 - y_pred)).sum().to(torch.float32)
-    fp = ((1 - y_true) * y_pred).sum().to(torch.float32)
-    fn = (y_true * (1 - y_pred)).sum().to(torch.float32)
-
-    epsilon = 1e-7
-
-    precision = tp / (tp + fp + epsilon)
-    recall = tp / (tp + fn + epsilon)
-
-    f1 = 2* (precision*recall) / (precision + recall + epsilon)
-    f1.requires_grad = is_training
-    return f1
 
 def writeSub(p):
+    labelmap = {0:'right', 1:'left', 2:'front', 3:'back'}
     test_df = pd.read_csv('data/sample_submission.csv')
-    p = p+1
     output_list = p.int().tolist()
+    output_list = [labelmap[i] for i in output_list]
     test_df['label'] = output_list
     test_df.to_csv('submission.csv',index = False)
