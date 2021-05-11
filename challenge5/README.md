@@ -11,4 +11,6 @@ python train.py --name f1 --fp16 --label_nc 0 --dataroot data/f1/ --resize_or_cr
 ### For testing:<br>
 python test.py --name f1 --fp16 --label_nc 0 --dataroot datasets/f1/ --resize_or_crop none --no_instance --how_many 5000
 
+The results will be in the **results/f1/test_latest/images**
+
 I've used apex for training wich can lead to a different score if not used.
