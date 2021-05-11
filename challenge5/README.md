@@ -1,5 +1,7 @@
 ## Instructions for recreating my solution with pix2pixHD
 
+### Copied repository from: https://github.com/NVIDIA/pix2pixHD
+
 Copy **train/smoke/0-20000.jpg** into **data/f1/train_A** and **train/clear/0-20000.jpg** into **data/f1/train_B**
 
 Copy **test/smoke/0-5000.jpg** into **datasets/f1/test_A**
