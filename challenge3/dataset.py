@@ -17,7 +17,7 @@ class ImgDataset(Dataset):
         label = np.concatenate((label,np.zeros(32-len(label))+10))
         label = [np.eye(11)[int(i)] for i in label]
         
-        i = cv2.imread(f'data/{self.mode}/'+str(path)+'.jpg')
+        i = cv2.imread(f'data/{self.mode}/'+str(path)+'.jpg')[64+40:192-32,64+16:192-16]
         
         i = cv2.cvtColor(i, cv2.COLOR_BGR2RGB)
         if self.transforms:
