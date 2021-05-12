@@ -181,7 +181,7 @@ ImageID,label
 179,front
 180,right
 181,left
-182,right
+182,front
 183,left
 184,back
 185,back
@@ -498,7 +498,7 @@ ImageID,label
 496,left
 497,left
 498,back
-499,back
+499,left
 500,back
 501,right
 502,front
@@ -773,7 +773,7 @@ ImageID,label
 771,front
 772,front
 773,left
-774,left
+774,back
 775,left
 776,back
 777,back
@@ -788,7 +788,7 @@ ImageID,label
 786,left
 787,front
 788,front
-789,left
+789,back
 790,back
 791,right
 792,right
@@ -1077,7 +1077,7 @@ ImageID,label
 1075,left
 1076,left
 1077,left
-1078,front
+1078,left
 1079,right
 1080,left
 1081,right
@@ -1098,7 +1098,7 @@ ImageID,label
 1096,front
 1097,right
 1098,front
-1099,right
+1099,back
 1100,front
 1101,left
 1102,front
@@ -1640,7 +1640,7 @@ ImageID,label
 1638,left
 1639,right
 1640,right
-1641,left
+1641,back
 1642,left
 1643,front
 1644,front
@@ -2236,7 +2236,7 @@ ImageID,label
 2234,left
 2235,front
 2236,left
-2237,left
+2237,back
 2238,left
 2239,left
 2240,left
@@ -2813,14 +2813,14 @@ ImageID,label
 2811,right
 2812,left
 2813,left
-2814,front
+2814,left
 2815,left
 2816,left
 2817,right
 2818,back
 2819,left
 2820,front
-2821,left
+2821,back
 2822,right
 2823,right
 2824,right
@@ -2919,7 +2919,7 @@ ImageID,label
 2917,left
 2918,left
 2919,left
-2920,left
+2920,back
 2921,front
 2922,front
 2923,right
@@ -3538,7 +3538,7 @@ ImageID,label
 3536,back
 3537,front
 3538,front
-3539,right
+3539,front
 3540,right
 3541,back
 3542,left
@@ -3745,7 +3745,7 @@ ImageID,label
 3743,left
 3744,right
 3745,left
-3746,left
+3746,back
 3747,right
 3748,left
 3749,front
@@ -4157,7 +4157,7 @@ ImageID,label
 4155,front
 4156,back
 4157,right
-4158,back
+4158,left
 4159,left
 4160,left
 4161,front
@@ -4421,7 +4421,7 @@ ImageID,label
 4419,left
 4420,right
 4421,right
-4422,left
+4422,front
 4423,front
 4424,left
 4425,front
@@ -4615,7 +4615,7 @@ ImageID,label
 4613,right
 4614,left
 4615,front
-4616,back
+4616,left
 4617,front
 4618,back
 4619,back
@@ -5184,7 +5184,7 @@ ImageID,label
 5182,right
 5183,front
 5184,right
-5185,left
+5185,back
 5186,back
 5187,front
 5188,left
@@ -5232,7 +5232,7 @@ ImageID,label
 5230,left
 5231,left
 5232,left
-5233,right
+5233,front
 5234,left
 5235,back
 5236,right
@@ -5548,7 +5548,7 @@ ImageID,label
 5546,front
 5547,left
 5548,left
-5549,left
+5549,back
 5550,left
 5551,front
 5552,front
@@ -5825,7 +5825,7 @@ ImageID,label
 5823,front
 5824,front
 5825,right
-5826,left
+5826,back
 5827,right
 5828,front
 5829,left
@@ -6611,7 +6611,7 @@ ImageID,label
 6609,front
 6610,left
 6611,back
-6612,right
+6612,back
 6613,back
 6614,right
 6615,back
@@ -6745,7 +6745,7 @@ ImageID,label
 6743,front
 6744,front
 6745,front
-6746,left
+6746,back
 6747,left
 6748,right
 6749,front
@@ -7134,7 +7134,7 @@ ImageID,label
 7132,right
 7133,right
 7134,front
-7135,right
+7135,front
 7136,front
 7137,right
 7138,front
@@ -7269,7 +7269,7 @@ ImageID,label
 7267,left
 7268,left
 7269,back
-7270,right
+7270,front
 7271,front
 7272,left
 7273,right
@@ -7286,7 +7286,7 @@ ImageID,label
 7284,left
 7285,front
 7286,left
-7287,back
+7287,left
 7288,back
 7289,left
 7290,back
@@ -7361,7 +7361,7 @@ ImageID,label
 7359,right
 7360,left
 7361,front
-7362,back
+7362,right
 7363,left
 7364,front
 7365,left
@@ -8177,7 +8177,7 @@ ImageID,label
 8175,right
 8176,front
 8177,right
-8178,back
+8178,right
 8179,left
 8180,back
 8181,left
@@ -8578,7 +8578,7 @@ ImageID,label
 8576,left
 8577,back
 8578,front
-8579,right
+8579,front
 8580,front
 8581,right
 8582,right
@@ -8616,7 +8616,7 @@ ImageID,label
 8614,back
 8615,left
 8616,back
-8617,left
+8617,back
 8618,left
 8619,right
 8620,right
@@ -8865,7 +8865,7 @@ ImageID,label
 8863,front
 8864,right
 8865,back
-8866,left
+8866,back
 8867,right
 8868,front
 8869,right
@@ -8887,7 +8887,7 @@ ImageID,label
 8885,front
 8886,back
 8887,right
-8888,front
+8888,left
 8889,front
 8890,right
 8891,front
@@ -9151,7 +9151,7 @@ ImageID,label
 9149,right
 9150,right
 9151,back
-9152,front
+9152,right
 9153,front
 9154,left
 9155,back

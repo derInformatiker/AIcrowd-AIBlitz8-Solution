@@ -17,7 +17,7 @@ class Classifier(pl.LightningModule):
         self.args = args
         
         #self.resnet = torch.hub.load('pytorch/vision:v0.9.0', 'resnet50', pretrained=False,num_classes = 2)
-        self.resnet = EfficientNet.from_pretrained('efficientnet-b3',num_classes = 4)
+        self.resnet = EfficientNet.from_pretrained('efficientnet-b4',num_classes = 4)
         #self.resnet._avg_pooling = nn.AdaptiveMaxPool2d(1)
 
     def forward(self, x):
