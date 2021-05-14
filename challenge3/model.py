@@ -28,8 +28,7 @@ class BidirectionalLSTM(nn.Module):
         output = output.view(T, b, -1)
 
         return output
-
-
+    
 class CRNN(nn.Module):
 
     def __init__(self, imgH, nc, nclass, nh, n_rnn=2, leakyRelu=False):
@@ -75,6 +74,7 @@ class CRNN(nn.Module):
         self.cnn = cnn
         self.rnn = nn.Sequential(
             BidirectionalLSTM(512, nh, nh),
+            BidirectionalLSTM(nh, nh, nh),
             BidirectionalLSTM(nh, nh, nclass))
 
     def forward(self, input):
@@ -86,7 +86,6 @@ class CRNN(nn.Module):
 
         # rnn features
         output = self.rnn(conv)
-
         return output
 def toNum(t):
     output = []
