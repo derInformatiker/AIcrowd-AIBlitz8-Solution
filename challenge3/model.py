@@ -6,87 +6,76 @@ import pandas as pd
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from efficientnet_pytorch import EfficientNet
 
-# CODE FROM https://github.com/meijieru/crnn.pytorch
-# LICENSE: MIT-LICENSE
+# CODE FROM https://github.com/clovaai/deep-text-recognition-benchmark
+"""
+Copyright (c) 2019-present NAVER Corp.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 
-class BidirectionalLSTM(nn.Module):
 
-    def __init__(self, nIn, nHidden, nOut):
-        super(BidirectionalLSTM, self).__init__()
+import torch.nn as nn
 
-        self.rnn = nn.LSTM(nIn, nHidden, bidirectional=True)
-        self.embedding = nn.Linear(nHidden * 2, nOut)
+from modules.transformation import TPS_SpatialTransformerNetwork
+from modules.feature_extraction import VGG_FeatureExtractor, RCNN_FeatureExtractor, ResNet_FeatureExtractor
+from modules.sequence_modeling import BidirectionalLSTM
+from modules.prediction import Attention
 
-    def forward(self, input):
-        recurrent, _ = self.rnn(input)
-        T, b, h = recurrent.size()
-        t_rec = recurrent.view(T * b, h)
+class Model(nn.Module):
 
-        output = self.embedding(t_rec)  # [T * b, nOut]
-        output = output.view(T, b, -1)
+    def __init__(self):
+        super(Model, self).__init__()
 
-        return output
-    
-class CRNN(nn.Module):
+        """ Transformation """
+        
+        self.Transformation = TPS_SpatialTransformerNetwork(
+            F=20, I_size=(64, 80), I_r_size=(64, 80), I_channel_num=3)
+        
 
-    def __init__(self, imgH, nc, nclass, nh, n_rnn=2, leakyRelu=False):
-        super(CRNN, self).__init__()
-        assert imgH % 16 == 0, 'imgH has to be a multiple of 16'
+        """ FeatureExtraction """
+        self.FeatureExtraction = ResNet_FeatureExtractor(3, 512)
+        
+        self.FeatureExtraction_output = 512  # int(imgH/16-1) * 512
+        self.AdaptiveAvgPool = nn.AdaptiveAvgPool2d((None, 1))  # Transform final (imgH/16-1) -> 1
 
-        ks = [3, 3, 3, 3, 3, 3, 2]
-        ps = [1, 1, 1, 1, 1, 1, 0]
-        ss = [1, 1, 1, 1, 1, 1, 1]
-        nm = [64, 128, 256, 256, 512, 512, 512]
+        """ Sequence modeling"""
+        
+        self.SequenceModeling = nn.Sequential(
+            BidirectionalLSTM(self.FeatureExtraction_output, 256, 256),
+            BidirectionalLSTM(256, 256, 256))
+        self.SequenceModeling_output = 256
+        
 
-        cnn = nn.Sequential()
+        """ Prediction """
+        
+        self.Prediction = nn.Linear(self.SequenceModeling_output, 11)
 
-        def convRelu(i, batchNormalization=False):
-            nIn = nc if i == 0 else nm[i - 1]
-            nOut = nm[i]
-            cnn.add_module('conv{0}'.format(i),
-                           nn.Conv2d(nIn, nOut, ks[i], ss[i], ps[i]))
-            if batchNormalization:
-                cnn.add_module('batchnorm{0}'.format(i), nn.BatchNorm2d(nOut))
-            if leakyRelu:
-                cnn.add_module('relu{0}'.format(i),
-                               nn.LeakyReLU(0.2, inplace=True))
-            else:
-                cnn.add_module('relu{0}'.format(i), nn.ReLU(True))
+    def forward(self, input, is_train=True):
+        """ Transformation stage """
+        input = self.Transformation(input)
 
-        convRelu(0)
-        cnn.add_module('pooling{0}'.format(0), nn.MaxPool2d(2, 2))  # 64x16x64
-        convRelu(1)
-        cnn.add_module('pooling{0}'.format(1), nn.MaxPool2d(2, 2))  # 128x8x32
-        convRelu(2, True)
-        convRelu(3)
-        cnn.add_module('pooling{0}'.format(2),
-                       nn.MaxPool2d((2, 2), (2, 1), (0, 1)))  # 256x4x16
-        convRelu(4, True)
-        convRelu(5)
-        cnn.add_module('pooling{0}'.format(3),
-                       nn.MaxPool2d((2, 2), (2, 1), (0, 1)))  # 512x2x16
-        convRelu(6, True)  # 512x1x16
-        cnn.add_module('adaptive_pooling0',
-                        nn.AdaptiveAvgPool2d((1,32)))
+        """ Feature extraction stage """
+        visual_feature = self.FeatureExtraction(input)
+        visual_feature = self.AdaptiveAvgPool(visual_feature.permute(0, 3, 1, 2))  # [b, c, h, w] -> [b, w, c, h]
+        visual_feature = visual_feature.squeeze(3)
+        
+        contextual_feature = self.SequenceModeling(visual_feature)
 
-        self.cnn = cnn
-        self.rnn = nn.Sequential(
-            BidirectionalLSTM(512, nh, nh),
-            BidirectionalLSTM(nh, nh, nh),
-            BidirectionalLSTM(nh, nh, nclass))
 
-    def forward(self, input):
-        # conv features
-        conv = self.cnn(input)
-        b, c, h, w = conv.size()
-        conv = conv.squeeze(2)
-        conv = conv.permute(2, 0, 1)  # [w, b, c]
+        """ Prediction stage """
+        
+        prediction = self.Prediction(contextual_feature.contiguous())
 
-        # rnn features
-        output = self.rnn(conv)
-        return output
+        return prediction.permute(1,0,2)
+
 def toNum(t):
     output = []
     t = t.argmax(2)
@@ -108,8 +97,12 @@ class Classifier(pl.LightningModule):
     def __init__(self,args):
         super().__init__()
         self.args = args
-        self.model = CRNN(128,3,11,256)
-
+        self.model = Model()
+        c = torch.load('TPS-ResNet-BiLSTM-CTC.pth')
+        c = {k.replace('module.',''):v for k,v in c.items() if 'LocalizationNetwork.conv.0.weight' not in k and 'FeatureExtraction.ConvNet.conv0_1.weight' not in k and
+        'Prediction' not in k and 'Transformation.GridGenerator.P_hat' not in k}
+        self.model.load_state_dict(c,strict = False)
+        
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
         x = self.model(x)
