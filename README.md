@@ -25,7 +25,7 @@ When training is finished write the path of the latest model to the line wich is
 > Run the script preprocess.py. It will cutout the car and save it under the directory **data/preprocessed/train, val, test**<br>
 > This will take 4GB of space on disk.
 > 
->If you don't want to train it you can download the weights from: (TODO: ADD LINK)
+>If you don't want to train challenge2 you can download the weights from: https://drive.google.com/file/d/1UsSfkFvHbMJLOYkdSqXrlO7C_LL2zDGs/view?usp=sharing
 
 Run all cells of run.ipynb.<br>
 When training is finished write the path of the latest model to the line wich is marked with a comment. The checkpoints are saved in the directory: ligtning_logs/version_/<br>
