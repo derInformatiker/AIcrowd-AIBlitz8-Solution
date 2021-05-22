@@ -60,7 +60,7 @@ class Model(nn.Module):
 
     def forward(self, input, is_train=True):
         """ Transformation stage """
-        input = self.Transformation(input)
+        #input = self.Transformation(input)
 
         """ Feature extraction stage """
         visual_feature = self.FeatureExtraction(input)
