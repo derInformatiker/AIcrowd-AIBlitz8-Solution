@@ -8,7 +8,7 @@ Copy **test/smoke/0-5000.jpg** into **datasets/f1/test_A**
 
 
 ### For training:<br>
-python train.py --name f1 --fp16 --label_nc 0 --dataroot data/f1/ --resize_or_crop none --no_instance --niter 100 --niter_decay 0
+python train.py --name f1 --fp16 --label_nc 0 --dataroot data/f1/ --resize_or_crop none --no_instance --niter 100 --niter_decay 0<br>
 It will take around 4 days on a RTX 2070 Super with Tensor cores enabled.
 
 ### For testing:<br>
