@@ -14,10 +14,13 @@ class ImgDataset(Dataset):
     def __getitem__(self,x):
         path = self.imageID.iloc[x]
         label = np.array([i for i in str(self.labels.iloc[x])]).astype(int)
-        label = np.concatenate((label,np.zeros(32-len(label))+10))
+        label = np.concatenate((label,np.zeros(23-len(label))+10))
         label = [np.eye(11)[int(i)] for i in label]
-        
-        i = cv2.imread(f'data/{self.mode}/'+str(path)+'.jpg')[64+40:192-32,64+16:192-16]
+        if self.mode == 'train':
+            i = cv2.imread(f'data/'+str(path)+'.jpg')[64+32:128+32,64+20:192-20]
+        else:
+            
+            i = cv2.imread(f'data/{self.mode}/'+str(path)+'.jpg')[64+32:128+32,64+20:192-20]
         
         i = cv2.cvtColor(i, cv2.COLOR_BGR2RGB)
         if self.transforms:
@@ -34,7 +37,7 @@ class ImgDataset(Dataset):
         return len(self.imageID)
     
 def getTrainDs(train_tr = None):
-    train_df = pd.read_csv('data/train.csv')
+    train_df = pd.read_csv('data/trainval.csv')
     return ImgDataset(train_df,'train',train_tr)
 
 def getValDs(val_tr):
